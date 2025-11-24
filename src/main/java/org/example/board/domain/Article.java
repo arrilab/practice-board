@@ -25,7 +25,7 @@ import java.util.Set;
 })
 @EntityListeners(AuditingEntityListener.class)
 @Entity
-public class Article {
+public class Article extends AuditingFields {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;                    // 식별자
@@ -42,21 +42,6 @@ public class Article {
     @Column(name = "hashtag")
     private String hashtag;             // 해시태그
 
-    @Column(nullable = false)
-    @CreatedDate
-    private LocalDateTime createdAt;    // 생성일자
-
-    @Column(nullable = false, length = 100)
-    @CreatedBy
-    private String createdBy;           // 생성자
-
-    @Column(nullable = false)
-    @LastModifiedDate
-    private LocalDateTime modifiedAt;   // 수정일자
-
-    @Column(nullable = false, length = 100)
-    @LastModifiedBy
-    private String modifiedBy;          // 수정자
 
     protected Article() {
     }
