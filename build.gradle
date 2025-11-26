@@ -51,10 +51,16 @@ dependencies {
 
     // Database
     runtimeOnly 'com.mysql:mysql-connector-j'                               // MySQL 드라이버 (운영/개발용)
-    runtimeOnly 'com.h2database:h2'                                         // H2 드라이버 (테스트/인메모리용)
+    runtimeOnly 'com.h2database:h2'
+    // H2 드라이버 (테스트/인메모리용)
+    // =========================================
+    // 4. View
+    // =========================================
+    // Thymeleaf
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
     // =========================================
-    // 4. Developer Tools (개발 편의성)
+    // 5. Developer Tools (개발 편의성)
     // =========================================
     // Spring Dev Tool
     developmentOnly 'org.springframework.boot:spring-boot-devtools'         // 서버 자동 재시작(Live Reload) 등 개발 편의 기능
@@ -63,7 +69,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'                          // Lombok 어노테이션 처리기
 
     // =========================================
-    // 5. Testing (테스트)
+    // 6. Testing (테스트)
     // =========================================
     testImplementation 'org.springframework.boot:spring-boot-starter-test'  // JUnit5, Mockito 등 테스트 통합 라이브러리
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'            // JUnit 테스트 실행 엔진
