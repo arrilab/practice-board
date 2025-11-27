@@ -1,5 +1,5 @@
 <!doctype html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 
 <head>
     <meta charset="UTF-8">
@@ -10,8 +10,7 @@
 </head>
 
 <body>
-<header th:replace="~{header :: header}"></header>
-
+<header id="header"></header>
 <main>
     <form>
         <label for="search-type" hidden>유형</label>
@@ -71,8 +70,7 @@
             </tr>
         </table>
     </nav>
-    네비바
 </main>
-<footer th:replace="~{footer :: footer}"></footer>
+<footer id="footer"></footer>
 </body>
 </html>
