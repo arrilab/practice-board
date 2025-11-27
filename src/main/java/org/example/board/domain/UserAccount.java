@@ -16,6 +16,7 @@ import java.util.Objects;
 })
 @Entity
 public class UserAccount extends AuditingFields {
+
     @Id
     @Column(length = 50)
     private String userId;
@@ -53,13 +54,13 @@ public class UserAccount extends AuditingFields {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof UserAccount that)) return false;
-        return this.getUserId() != null && this.getUserId().equals(that.getUserId());
+        if (o == null || getClass() != o.getClass()) return false;
+        UserAccount that = (UserAccount) o;
+        return this.getUserId() != null && Objects.equals(getUserId(), that.getUserId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.getUserId());
+        return Objects.hashCode(getUserId());
     }
 }
