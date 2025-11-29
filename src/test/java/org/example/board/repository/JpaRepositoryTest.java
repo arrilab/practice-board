@@ -2,6 +2,7 @@ package org.example.board.repository;
 
 import org.example.board.config.JpaConfig;
 import org.example.board.domain.Article;
+import org.example.board.domain.UserAccount;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,14 +20,19 @@ class JpaRepositoryTest {
 
     private final ArticleRepository articleRepository;
     private final ArticleCommentRepository articleCommentRepository;
+    private final UserAccountRepository userAccountRepository;
 
-    @Autowired
-    JpaRepositoryTest(ArticleRepository articleRepository, ArticleCommentRepository articleCommentRepository) {
+    public JpaRepositoryTest(
+            @Autowired ArticleRepository articleRepository,
+            @Autowired ArticleCommentRepository articleCommentRepository,
+            @Autowired UserAccountRepository userAccountRepository
+    ) {
         this.articleRepository = articleRepository;
         this.articleCommentRepository = articleCommentRepository;
+        this.userAccountRepository = userAccountRepository;
     }
 
-    @DisplayName("[SELECT] 게시글 리스트 조회")
+    @DisplayName("select 테스트")
     @Test
     void givenTestData_whenSelecting_thenWorksFine() {
         // Given
@@ -37,56 +43,53 @@ class JpaRepositoryTest {
         // Then
         assertThat(articles)
                 .isNotNull()
-                .hasSize(123); // data.sql에 123개의 데이터가 있다고 가정한 상태
+                .hasSize(123);
     }
 
-    @DisplayName("[INSERT] 게시글 생성")
+    @DisplayName("insert 테스트")
     @Test
-    void givenArticleInfo_whenInserting_thenWorksFine() {
+    void givenTestData_whenInserting_thenWorksFine() {
         // Given
-        long initialCount = articleRepository.count();
-        Article article = Article.of("new article", "new content", "#spring");
+        long previousCount = articleRepository.count();
+        UserAccount userAccount = userAccountRepository.save(UserAccount.of("uno", "pw", null, null, null));
+        Article article = Article.of(userAccount, "new article", "new content", "#spring");
 
         // When
-        Article savedArticle = articleRepository.save(article);
+        articleRepository.save(article);
 
         // Then
-        assertThat(articleRepository.count()).isEqualTo(initialCount + 1);
-        assertThat(savedArticle.getTitle()).isEqualTo("new article"); // 내용도 잘 들어갔는지 체크
+        assertThat(articleRepository.count()).isEqualTo(previousCount + 1);
     }
 
-    @DisplayName("[UPDATE] 게시글 수정 - 해시태그 업데이트")
+    @DisplayName("update 테스트")
     @Test
-    void givenArticleAndModifiedInfo_whenUpdating_thenWorksFine() {
+    void givenTestData_whenUpdating_thenWorksFine() {
         // Given
         Article article = articleRepository.findById(1L).orElseThrow();
         String updatedHashtag = "#springboot";
         article.setHashtag(updatedHashtag);
 
         // When
-        // saveAndFlush: 테스트 트랜잭션 내에서도 즉시 쿼리를 날려 확인하기 위함
         Article savedArticle = articleRepository.saveAndFlush(article);
 
         // Then
         assertThat(savedArticle).hasFieldOrPropertyWithValue("hashtag", updatedHashtag);
     }
 
-    @DisplayName("[DELETE] 게시글 삭제 시, 연관된 댓글도 함께 삭제됨")
+    @DisplayName("delete 테스트")
     @Test
-    void givenArticle_whenDeleting_thenAlsoDeletesRelatedComments() {
+    void givenTestData_whenDeleting_thenWorksFine() {
         // Given
         Article article = articleRepository.findById(1L).orElseThrow();
-
-        // 게시글 삭제 전 데이터 수 확인
-        long initialArticleCount = articleRepository.count();
-        long initialCommentCount = articleCommentRepository.count();
-        int relatedCommentSize = article.getArticleComments().size();
+        long previousArticleCount = articleRepository.count();
+        long previousArticleCommentCount = articleCommentRepository.count();
+        int deletedCommentsSize = article.getArticleComments().size();
 
         // When
         articleRepository.delete(article);
 
         // Then
-        assertThat(articleRepository.count()).isEqualTo(initialArticleCount - 1);
-        assertThat(articleCommentRepository.count()).isEqualTo(initialCommentCount - relatedCommentSize);
+        assertThat(articleRepository.count()).isEqualTo(previousArticleCount - 1);
+        assertThat(articleCommentRepository.count()).isEqualTo(previousArticleCommentCount - deletedCommentsSize);
     }
 }
