@@ -20,6 +20,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
+    open-in-view: false # OSIV 옵션 해제
     defer-datasource-initialization: true
     hibernate:
       ddl-auto: create
