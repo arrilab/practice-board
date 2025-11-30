@@ -8,31 +8,30 @@ import lombok.ToString;
 import java.util.Objects;
 
 @Getter
-@ToString(callSuper = true)
+@ToString
 @Table(indexes = {
+        @Index(columnList = "userId"),
         @Index(columnList = "email", unique = true),
         @Index(columnList = "createdAt"),
         @Index(columnList = "createdBy")
 })
 @Entity
 public class UserAccount extends AuditingFields {
-
     @Id
-    @Column(length = 50)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Setter
+    @Column(nullable = false, length = 50)
     private String userId;
-
     @Setter
     @Column(nullable = false)
     private String userPassword;
-
     @Setter
     @Column(length = 100)
     private String email;
-
     @Setter
     @Column(length = 100)
     private String nickname;
-
     @Setter
     private String memo;
 
@@ -49,18 +48,18 @@ public class UserAccount extends AuditingFields {
     }
 
     public static UserAccount of(String userId, String userPassword, String email, String nickname, String memo) {
-        return UserAccount.of(userId, userPassword, email, nickname, memo);
+        return new UserAccount(userId, userPassword, email, nickname, memo);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        UserAccount that = (UserAccount) o;
-        return this.getUserId() != null && Objects.equals(getUserId(), that.getUserId());
+        if (this == o) return true;
+        if (!(o instanceof UserAccount userAccount)) return false;
+        return id != null && id.equals(userAccount.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getUserId());
+        return Objects.hash(id);
     }
 }
